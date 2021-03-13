@@ -11,11 +11,11 @@ namespace WebAppKeyVault.Helpers
 {
     public class KeyVaultReader
     {
-        private static string keyVaultEndpoint = ConfigurationManager.AppSettings["KeyValutEndpoint"];
-        private static string tenantId = ConfigurationManager.AppSettings["TenantId"];
-        private static string appId = ConfigurationManager.AppSettings["AppId"];
-        private static string appSecret = ConfigurationManager.AppSettings["AppSecret"];
-        private static string certThumbprint = ConfigurationManager.AppSettings["CertThumbprint"];
+        private static readonly string keyVaultEndpoint = ConfigurationManager.AppSettings["KeyValutEndpoint"];
+        private static readonly string tenantId = ConfigurationManager.AppSettings["TenantId"];
+        private static readonly string appId = ConfigurationManager.AppSettings["AppId"];
+        private static readonly string appSecret = ConfigurationManager.AppSettings["AppSecret"];
+        private static readonly string certThumbprint = ConfigurationManager.AppSettings["CertThumbprint"];
 
         public static async Task<string> ReadSecret(string keyName)
         {
