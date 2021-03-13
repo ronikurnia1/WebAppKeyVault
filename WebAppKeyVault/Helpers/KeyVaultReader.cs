@@ -19,31 +19,31 @@ namespace WebAppKeyVault.Helpers
 
         public static async Task<string> ReadSecret(string keyName)
         {
-            var credential = GetCredential(CredentialType.Certificate);
+            var credential = GetCredential(AuthType.Certificate);
             var secretClient = new SecretClient(new Uri(keyVaultEndpoint), credential);
-            var kvResponse = await secretClient.GetSecretAsync(keyName);
-            return kvResponse.Value.Value;
+            KeyVaultSecret keyVaultSecret = await secretClient.GetSecretAsync(keyName);
+            return keyVaultSecret.Value;
         }
 
 
         public static async Task<IDictionary<string, string>> ReadSecrets(IEnumerable<string> keyNames)
         {
-            var credential = GetCredential(CredentialType.Certificate);
+            var credential = GetCredential(AuthType.Certificate);
             var secretClient = new SecretClient(new Uri(keyVaultEndpoint), credential);
 
             var secrets = new Dictionary<string, string>();
             foreach (var keyName in keyNames)
             {
-                var kvResponse = await secretClient.GetSecretAsync(keyName);
-                secrets.Add(keyName, kvResponse.Value.Value);
+                KeyVaultSecret keyVaultSecret = await secretClient.GetSecretAsync(keyName);
+                secrets.Add(keyName, keyVaultSecret.Value);
             }
             return secrets;
         }
 
 
-        private static TokenCredential GetCredential(CredentialType credentialType)
+        private static TokenCredential GetCredential(AuthType authType)
         {
-            if (credentialType == CredentialType.Certificate)
+            if (authType == AuthType.Certificate)
             {
                 var store = new X509Store(StoreName.My, StoreLocation.CurrentUser);
                 store.Open(OpenFlags.OpenExistingOnly);
@@ -57,7 +57,7 @@ namespace WebAppKeyVault.Helpers
             }
         }
 
-        private enum CredentialType
+        private enum AuthType
         {
             Secret = 0,
             Certificate = 1

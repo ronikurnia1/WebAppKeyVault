@@ -1,7 +1,17 @@
 ﻿@{
     ViewBag.Title = "About";
 }
-<h2>@ViewBag.Title.</h2>
-<h3>@ViewBag.Message</h3>
-<h4>@ViewBag.MessageLine1</h4>
-<h4>@ViewBag.MessageLine2</h4>
+
+<div class="container">
+    <br />
+    <h2>@ViewBag.Title.</h2>
+    <h3>@ViewBag.Message</h3>
+    <p>The following values come from Azure Key Vault</p>
+    <address>
+        <strong>UserName:</strong> @ViewBag.UserName<br />
+        <strong>Password:</strong> @ViewBag.Password
+    </address>
+
+    <hr />
+</div>
+

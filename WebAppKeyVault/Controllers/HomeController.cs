@@ -23,9 +23,9 @@ namespace WebAppKeyVault.Controllers
             var dbUserNameValue = secrets[dbUserName];
             var dbPasswordValue = secrets[dbPassword];
 
-            ViewBag.Message = $"Value from Azure Key Vault";
-            ViewBag.MessageLine1 = $"{dbUserName}: {dbUserNameValue}";
-            ViewBag.MessageLine2 = $"{dbPassword}: {dbPasswordValue}";
+            ViewBag.Message = $"Credential information";
+            ViewBag.UserName = $"{dbUserNameValue}";
+            ViewBag.Password = $"{dbPasswordValue}";
 
             // Modify credential of ConnectionString
             var connString = ConfigurationManager.ConnectionStrings["DbConnectionString"].ConnectionString;
@@ -38,7 +38,6 @@ namespace WebAppKeyVault.Controllers
             }
             securePassword.MakeReadOnly();
             conn.Credential = new SqlCredential(dbUserNameValue, securePassword);
-
 
             return View();
         }
