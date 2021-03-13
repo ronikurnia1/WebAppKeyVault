@@ -20,8 +20,8 @@ namespace WebAppCoreKeyVault
             {
                 var configBuild = config.Build();
                 var keyVaultEndpoint = new Uri(configBuild["ServicePrinciple:KeyVaultEndpoint"]);
-                var tokenCredential = GetCredential(AuthType.Certificate, configBuild);
-                config.AddAzureKeyVault(keyVaultEndpoint, tokenCredential);
+                var credential = GetCredential(AuthType.Certificate, configBuild);
+                config.AddAzureKeyVault(keyVaultEndpoint, credential);
                 //config.AddAzureKeyVault(keyVaultEndpoint, new DefaultAzureCredential());
             }).ConfigureWebHostDefaults(webBuilder =>
             {
