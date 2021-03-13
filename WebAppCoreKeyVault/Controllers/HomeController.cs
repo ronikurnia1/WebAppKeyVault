@@ -11,9 +11,9 @@ namespace WebAppCoreKeyVault.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly IConfiguration config;
+        private readonly IConfigurationRoot config;
 
-        public HomeController(ILogger<HomeController> logger, IConfiguration config)
+        public HomeController(ILogger<HomeController> logger, IConfigurationRoot config)
         {
             _logger = logger;
             this.config = config;
@@ -26,6 +26,7 @@ namespace WebAppCoreKeyVault.Controllers
 
         public IActionResult Privacy()
         {
+            config.Reload();
             ViewBag.DbPassword = config["DbPassword"];
             ViewBag.DbUserName = config["DbUserName"];
 

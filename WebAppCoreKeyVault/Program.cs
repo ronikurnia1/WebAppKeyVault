@@ -2,6 +2,7 @@ using Azure.Core;
 using Azure.Identity;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Security.Cryptography.X509Certificates;
@@ -10,6 +11,7 @@ namespace WebAppCoreKeyVault
 {
     public class Program
     {
+        private static IConfigurationRoot configurationRoot;
         public static void Main(string[] args)
         {
             CreateHostBuilder(args).Build().Run();
@@ -22,10 +24,15 @@ namespace WebAppCoreKeyVault
                 var keyVaultEndpoint = new Uri(configBuild["ServicePrinciple:KeyVaultEndpoint"]);
                 var credential = GetCredential(AuthType.Certificate, configBuild);
                 config.AddAzureKeyVault(keyVaultEndpoint, credential);
+                configurationRoot = config.Build();
                 //config.AddAzureKeyVault(keyVaultEndpoint, new DefaultAzureCredential());
+
             }).ConfigureWebHostDefaults(webBuilder =>
             {
-                webBuilder.UseStartup<Startup>();
+                webBuilder.ConfigureServices(services =>
+                {
+                    services.AddSingleton(configurationRoot);
+                }).UseStartup<Startup>();
             });
 
 
