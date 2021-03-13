@@ -27,8 +27,6 @@ namespace WebAppKeyVault.Controllers
             ViewBag.MessageLine1 = $"{dbUserName}: {dbUserNameValue}";
             ViewBag.MessageLine2 = $"{dbPassword}: {dbPasswordValue}";
 
-
-
             // Modify credential of ConnectionString
             var connString = ConfigurationManager.ConnectionStrings["DbConnectionString"].ConnectionString;
             var conn = new SqlConnection(connString);
