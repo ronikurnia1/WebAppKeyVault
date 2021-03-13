@@ -39,10 +39,10 @@ namespace WebAppCoreKeyVault
 
             if (authType == AuthType.Certificate)
             {
-                var store = new X509Store(StoreName.My, StoreLocation.CurrentUser);
+                using var store = new X509Store(StoreName.My, StoreLocation.CurrentUser);
                 store.Open(OpenFlags.OpenExistingOnly);
-
                 var certs = store.Certificates.Find(X509FindType.FindByThumbprint, certThumbprint, false);
+                store.Close();
                 return new ClientCertificateCredential(tenantId, appId, certs[0]);
             }
             else

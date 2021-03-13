@@ -1,11 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Security;
 using WebAppCoreKeyVault.Models;
 
 namespace WebAppCoreKeyVault.Controllers
@@ -30,6 +28,19 @@ namespace WebAppCoreKeyVault.Controllers
         {
             ViewBag.DbPassword = config["DbPassword"];
             ViewBag.DbUserName = config["DbUserName"];
+
+            // Modify credential of ConnectionString
+            var connString = config.GetConnectionString("DbConnectionString");
+            var conn = new SqlConnection(connString);
+
+            var securePassword = new SecureString();
+            foreach (char character in ViewBag.DbPassword)
+            {
+                securePassword.AppendChar(character);
+            }
+            securePassword.MakeReadOnly();
+            conn.Credential = new SqlCredential(ViewBag.DbUserName, securePassword);
+
             return View();
         }
 
