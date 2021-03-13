@@ -1,52 +1,66 @@
-﻿using Microsoft.Azure.KeyVault;
-using Microsoft.Azure.Services.AppAuthentication;
+﻿using Azure.Core;
+using Azure.Identity;
+using Azure.Security.KeyVault.Secrets;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Threading;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 
 namespace WebAppKeyVault.Helpers
 {
     public class KeyVaultReader
     {
+        private static string keyVaultEndpoint = ConfigurationManager.AppSettings["KeyValutEndpoint"];
+        private static string tenantId = ConfigurationManager.AppSettings["TenantId"];
+        private static string appId = ConfigurationManager.AppSettings["AppId"];
+        private static string appSecret = ConfigurationManager.AppSettings["AppSecret"];
+        private static string certThumbprint = ConfigurationManager.AppSettings["CertThumbprint"];
+
         public static async Task<string> ReadSecret(string keyName)
         {
-            var keyVaultEndpoint = ConfigurationManager.AppSettings["KeyValutEndpoint"];
-            var tenantId = ConfigurationManager.AppSettings["TenantId"];
-            var appId = ConfigurationManager.AppSettings["AppId"];
-            var appSecret = ConfigurationManager.AppSettings["AppSecret"];
-
-            var tokenConnectionString = $"RunAs=App;AppId={appId};TenantId={tenantId};AppKey={appSecret}";
-            var azureServiceTokenProvider = new AzureServiceTokenProvider(tokenConnectionString);
-            var keyVaultClient = new KeyVaultClient(new KeyVaultClient.AuthenticationCallback(azureServiceTokenProvider.KeyVaultTokenCallback));
-
-            var secret = await keyVaultClient.GetSecretAsync(keyVaultEndpoint, keyName, CancellationToken.None);
-            return secret.Value;
+            var credential = GetCredential(CredentialType.Certificate);
+            var secretClient = new SecretClient(new Uri(keyVaultEndpoint), credential);
+            var kvResponse = await secretClient.GetSecretAsync(keyName);
+            return kvResponse.Value.Value;
         }
 
 
         public static async Task<IDictionary<string, string>> ReadSecrets(IEnumerable<string> keyNames)
         {
+            var credential = GetCredential(CredentialType.Certificate);
+            var secretClient = new SecretClient(new Uri(keyVaultEndpoint), credential);
+
             var secrets = new Dictionary<string, string>();
-
-            var keyVaultEndpoint = ConfigurationManager.AppSettings["KeyValutEndpoint"];
-            var tenantId = ConfigurationManager.AppSettings["TenantId"];
-            var appId = ConfigurationManager.AppSettings["AppId"];
-            var appSecret = ConfigurationManager.AppSettings["AppSecret"];
-
-            var tokenConnectionString = $"RunAs=App;AppId={appId};TenantId={tenantId};AppKey={appSecret}";
-            var azureServiceTokenProvider = new AzureServiceTokenProvider(tokenConnectionString);
-            var keyVaultClient = new KeyVaultClient(new KeyVaultClient.AuthenticationCallback(azureServiceTokenProvider.KeyVaultTokenCallback));
-
-            foreach(var keyName in keyNames)
+            foreach (var keyName in keyNames)
             {
-                var secret = await keyVaultClient.GetSecretAsync(keyVaultEndpoint, keyName, CancellationToken.None);
-                secrets.Add(keyName, secret.Value);
+                var kvResponse = await secretClient.GetSecretAsync(keyName);
+                secrets.Add(keyName, kvResponse.Value.Value);
             }
-
             return secrets;
         }
 
 
+        private static TokenCredential GetCredential(CredentialType credentialType)
+        {
+            if (credentialType == CredentialType.Certificate)
+            {
+                var store = new X509Store(StoreName.My, StoreLocation.CurrentUser);
+                store.Open(OpenFlags.OpenExistingOnly);
+
+                var certs = store.Certificates.Find(X509FindType.FindByThumbprint, certThumbprint, false);
+                return new ClientCertificateCredential(tenantId, appId, certs[0]);
+            }
+            else
+            {
+                return new ClientSecretCredential(tenantId, appId, appSecret);
+            }
+        }
+
+        private enum CredentialType
+        {
+            Secret = 0,
+            Certificate = 1
+        }
     }
 }
