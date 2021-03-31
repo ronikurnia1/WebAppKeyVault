@@ -68,6 +68,7 @@ namespace WebAppCoreKeyVault.Controllers
             };
             requestToken.Content = new FormUrlEncodedContent(content);
             var tokenResponse = await httpClient.SendAsync(requestToken);
+
             if (tokenResponse.IsSuccessStatusCode)
             {
                 // Get Key Vault secret
@@ -78,11 +79,12 @@ namespace WebAppCoreKeyVault.Controllers
                 httpClient.BaseAddress = new System.Uri(config["ServicePrinciple:KeyVaultEndpoint"]);
                 httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {accessToken}");
                 var requestKeyVault = new HttpRequestMessage(HttpMethod.Get, $"secrets/{secretName}?api-version=7.0");
+
                 var keyVaultResponse = await httpClient.SendAsync(requestKeyVault);
                 if (keyVaultResponse.IsSuccessStatusCode)
                 {
                     message = await keyVaultResponse.Content.ReadAsStringAsync();
-                    ViewBag.DbPassword = JsonSerializer.Deserialize<KeyVaultSecret>(message).value;
+                    ViewBag.DbPassword = JsonSerializer.Deserialize<KeyVaultSecretValue>(message).value;
                 }
                 else
                 {
@@ -109,7 +111,7 @@ namespace WebAppCoreKeyVault.Controllers
         public string access_token { get; set; }
     }
 
-    internal class KeyVaultSecret
+    internal class KeyVaultSecretValue
     {
         public string value { get; set; }
     }

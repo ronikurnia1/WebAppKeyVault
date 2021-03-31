@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebAppCoreKeyVault", "WebAp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApp-OpenIDConnect", "WebAppOpenIdConnect\WebApp-OpenIDConnect.csproj", "{E9C38BF4-D274-4D92-8361-A258CEA34C11}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApp3.5", "WebApp3.5\WebApp3.5.csproj", "{EA8E4EDF-5CE3-4E5F-8531-9B8F12252FA3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{E9C38BF4-D274-4D92-8361-A258CEA34C11}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E9C38BF4-D274-4D92-8361-A258CEA34C11}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E9C38BF4-D274-4D92-8361-A258CEA34C11}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA8E4EDF-5CE3-4E5F-8531-9B8F12252FA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA8E4EDF-5CE3-4E5F-8531-9B8F12252FA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA8E4EDF-5CE3-4E5F-8531-9B8F12252FA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA8E4EDF-5CE3-4E5F-8531-9B8F12252FA3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
